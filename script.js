@@ -4,7 +4,17 @@ const addTaskButton = document.getElementById('addTaskButton');
 
 const taskList = document.getElementById('taskList');
 
+const taskCounter = document.getElementById('taskCounter');
+
+const clearTasksButton = document.getElementById('clearTasksButton');
+
 let tasks = [];
+
+function updateTaskCounter() {
+    const total = tasks.length;
+
+    taskCounter.textContent = `${total} tarefa${total !== 1 ? 's' : ''}`;
+}
 
 function saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -18,10 +28,14 @@ function loadTasks() {
     }
 }
 
-function renderTask(taskText) {
+function renderTask(task) {
     const li = document.createElement('li');
 
-    li.innerHTML = `<span>${taskText}</span>`;
+    li.innerHTML = `<span>${task.text}</span>`;
+
+    if (task.completed) {
+    li.classList.add('completed');
+    }
 
     const deleteButton = document.createElement('button');
 
@@ -30,15 +44,22 @@ function renderTask(taskText) {
     deleteButton.addEventListener('click', function (event) {
         event.stopPropagation();
 
-        tasks = tasks.filter(task => task !== taskText);
+        tasks = tasks.filter(t => t !== task);
 
         saveTasks();
+
+        updateTaskCounter();
 
         li.remove();
     });
 
     li.addEventListener('click', function () {
-        li.classList.toggle('completed');
+        task.completed = !task.completed;
+
+        saveTasks();
+
+        li.classList.toggle('completed')
+
     });
 
     li.appendChild(deleteButton);
@@ -53,11 +74,16 @@ addTaskButton.addEventListener('click', function () {
         return;
     }
 
-    tasks.push(taskText);
+    tasks.push({
+        text: taskText,
+        completed: false
+    });
 
     saveTasks();
 
-    renderTask(taskText);
+    renderTask(tasks[tasks.length - 1]);
+
+    updateTaskCounter();
 
     taskInput.value = '';
 });
@@ -70,6 +96,19 @@ taskInput.addEventListener('keydown', function (event) {
 
 loadTasks();
 
+
+clearTasksButton.addEventListener('click', function () {
+    tasks = [];
+
+    saveTasks();
+
+    taskList.innerHTML = '';
+
+    updateTaskCounter();
+});
+
 tasks.forEach(function (task) {
     renderTask(task);
 });
+
+updateTaskCounter();

@@ -11,9 +11,10 @@ body {
 
     display: flex;
     justify-content: center;
-    align-items: center;
 
-    height: 100vh;
+    min-height: 100vh;
+
+    padding: 40px 0;
 }
 
 .container {
@@ -53,6 +54,16 @@ button {
 
 button:hover {
     background-color: #2563eb;
+}
+
+.danger-button {
+    background-color: #ef4444;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.danger-button:hover {
+    background-color: #dc2626;
 }
 
 ul {
